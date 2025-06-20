@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2563eb, #9333ea, #ea580c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 2rem;
+            max-width: 28rem;
+            width: 100%;
+            text-align: center;
+            transform: scale(1);
+            transition: transform 0.5s ease;
+        }
+
+        .game-container:hover {
+            transform: scale(1.05);
+        }
+
+        .game-icon {
+            font-size: 3.75rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-container {
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1.125rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.75rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #3b82f6;
+        }
+
+        .btn {
+            width: 100%;
+            background: linear-gradient(to right, #3b82f6, #9333ea);
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 1.125rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+            transform: scale(1.05);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .round-header {
+            background: linear-gradient(to right, #dbeafe, #e0e7ff);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .round-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .round-subtitle {
+            font-size: 1.125rem;
+            color: #6b7280;
+        }
+
+        .score-container {
+            display: flex;
+            justify-content: space-between;
+            background: #f3f4f6;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .player-score {
+            color: #2563eb;
+        }
+
+        .computer-score {
+            color: #dc2626;
+        }
+
+        .score-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .moves-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .move-item {
+            text-align: center;
+        }
+
+        .move-emoji {
+            font-size: 3.75rem;
+            margin-bottom: 0.5rem;
+            transition: transform 0.5s ease;
+        }
+
+        .move-emoji.winner {
+            animation: bounce 1s infinite;
+        }
+
+        .move-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .move-name {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .vs-icon {
+            font-size: 1.875rem;
+            animation: pulse 2s infinite;
+        }
+
+        .result-display {
+            font-size: 1.25rem;
+            font-weight: bold;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-win {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .result-lose {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .result-tie {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .moves-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .move-btn {
+            background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
+            border: none;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .move-btn:hover:not(:disabled) {
+            background: linear-gradient(to bottom, #dbeafe, #bfdbfe);
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+        }
+
+        .move-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .move-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .move-btn-name {
+            font-size: 0.75rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .loading {
+            text-align: center;
+            animation: pulse 1s infinite;
+        }
+
+        .loading-icon {
+            font-size: 1.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-text {
+            color: #6b7280;
+        }
+
+        .final-score {
+            background: linear-gradient(to right, #dbeafe, #e0e7ff);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .final-score h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .final-scores {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .winner-announcement {
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            animation: bounce 1s infinite;
+        }
+
+        .play-again-btn {
+            background: linear-gradient(to right, #10b981, #3b82f6);
+        }
+
+        /* Animations */
+        @keyframes fade-in {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        @keyframes scale-in {
+            from { 
+                transform: scale(0.8); 
+                opacity: 0; 
+            }
+            to { 
+                transform: scale(1); 
+                opacity: 1; 
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                transform: translate3d(0, -10px, 0);
+            }
+            70% {
+                transform: translate3d(0, -5px, 0);
+            }
+            90% {
+                transform: translate3d(0, -2px, 0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.5s ease-out;
+        }
+
+        .animate-scale-in {
+            animation: scale-in 0.3s ease-out;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Setup Phase -->
+        <div id="setup-phase" class="animate-fade-in">
+            <div class="game-icon">🎮</div>
+            <h1>Rock Paper Scissors</h1>
+            <p class="subtitle">Enter your name to start playing!</p>
+            
+            <div class="input-container">
+                <input type="text" id="player-name" placeholder="Enter your name..." />
+            </div>
+            
+            <button class="btn" id="start-btn">Start Game 🚀</button>
+        </div>
+
+        <!-- Playing Phase -->
+        <div id="playing-phase" class="hidden">
+            <!-- Header -->
+            <div class="round-header">
+                <div class="round-title" id="round-title">Round 1/5</div>
+                <div class="round-subtitle" id="round-subtitle">What's your move?</div>
+            </div>
+
+            <!-- Score -->
+            <div class="score-container">
+                <div class="score-item">
+                    <div class="score-value player-score" id="player-score">0</div>
+                    <div class="score-label" id="player-label">Player</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-value computer-score" id="computer-score">0</div>
+                    <div class="score-label">Computer</div>
+                </div>
+            </div>
+
+            <!-- Moves Display -->
+            <div id="moves-display" class="moves-display hidden">
+                <div class="move-item">
+                    <div class="move-emoji" id="player-move-emoji"></div>
+                    <div class="move-label" id="player-move-label">Player</div>
+                    <div class="move-name" id="player-move-name"></div>
+                </div>
+                
+                <div class="vs-icon">⚔️</div>
+                
+                <div class="move-item">
+                    <div class="move-emoji" id="computer-move-emoji"></div>
+                    <div class="move-label">Computer</div>
+                    <div class="move-name" id="computer-move-name"></div>
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div id="result-display" class="result-display hidden"></div>
+
+            <!-- Move Buttons -->
+            <div id="move-buttons" class="moves-grid">
+                <button class="move-btn" data-move="rock">
+                    <span>✊</span>
+                    <span class="move-btn-name">Rock</span>
+                </button>
+                <button class="move-btn" data-move="paper">
+                    <span>✋</span>
+                    <span class="move-btn-name">Paper</span>
+                </button>
+                <button class="move-btn" data-move="scissors">
+                    <span>✌️</span>
+                    <span class="move-btn-name">Scissors</span>
+                </button>
+            </div>
+
+            <!-- Loading Animation -->
+            <div id="loading" class="loading hidden">
+                <div class="loading-icon">🎲</div>
+                <div class="loading-text">Computer is thinking...</div>
+            </div>
+        </div>
+
+        <!-- Finished Phase -->
+        <div id="finished-phase" class="hidden">
+            <div class="game-icon">🏆</div>
+            <h1>Game Over!</h1>
+            
+            <!-- Final Score -->
+            <div class="final-score">
+                <h3>Final Score</h3>
+                <div class="final-scores">
+                    <span id="final-player-score" class="player-score">Player: 0</span>
+                    <span id="final-computer-score" class="computer-score">Computer: 0</span>
+                </div>
+            </div>
+
+            <!-- Winner Announcement -->
+            <div id="winner-announcement" class="winner-announcement"></div>
+
+            <button class="btn play-again-btn" id="play-again-btn">Play Again 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let gameState = 'setup';
+        let playerName = '';
+        let currentRound = 1;
+        let playerScore = 0;
+        let computerScore = 0;
+        let isAnimating = false;
+
+        // Move mappings
+        const moves = {
+            rock: '✊',
+            paper: '✋',
+            scissors: '✌️'
+        };
+
+        const moveNames = {
+            rock: 'Rock',
+            paper: 'Paper',
+            scissors: 'Scissors'
+        };
+
+        // DOM elements
+        const setupPhase = document.getElementById('setup-phase');
+        const playingPhase = document.getElementById('playing-phase');
+        const finishedPhase = document.getElementById('finished-phase');
+        const playerNameInput = document.getElementById('player-name');
+        const startBtn = document.getElementById('start-btn');
+        const roundTitle = document.getElementById('round-title');
+        const roundSubtitle = document.getElementById('round-subtitle');
+        const playerScoreEl = document.getElementById('player-score');
+        const computerScoreEl = document.getElementById('computer-score');
+        const playerLabel = document.getElementById('player-label');
+        const movesDisplay = document.getElementById('moves-display');
+        const playerMoveEmoji = document.getElementById('player-move-emoji');
+        const computerMoveEmoji = document.getElementById('computer-move-emoji');
+        const playerMoveLabel = document.getElementById('player-move-label');
+        const playerMoveName = document.getElementById('player-move-name');
+        const computerMoveName = document.getElementById('computer-move-name');
+        const resultDisplay = document.getElementById('result-display');
+        const moveButtons = document.getElementById('move-buttons');
+        const loading = document.getElementById('loading');
+        const finalPlayerScore = document.getElementById('final-player-score');
+        const finalComputerScore = document.getElementById('final-computer-score');
+        const winnerAnnouncement = document.getElementById('winner-announcement');
+        const playAgainBtn = document.getElementById('play-again-btn');
+
+        // Utility functions
+        function getRandomMove() {
+            const moveKeys = Object.keys(moves);
+            return moveKeys[Math.floor(Math.random() * moveKeys.length)];
+        }
+
+        function determineWinner(playerMove, computerMove) {
+            if (playerMove === computerMove) return 'tie';
+            
+            if (
+                (playerMove === 'rock' && computerMove === 'scissors') ||
+                (playerMove === 'paper' && computerMove === 'rock') ||
+                (playerMove === 'scissors' && computerMove === 'paper')
+            ) {
+                return 'player';
+            }
+            return 'computer';
+        }
+
+        function showPhase(phase) {
+            setupPhase.classList.add('hidden');
+            playingPhase.classList.add('hidden');
+            finishedPhase.classList.add('hidden');
+            
+            if (phase === 'setup') {
+                setupPhase.classList.remove('hidden');
+            } else if (phase === 'playing') {
+                playingPhase.classList.remove('hidden');
+            } else if (phase === 'finished') {
+                finishedPhase.classList.remove('hidden');
+            }
+        }
+
+        function resetRound() {
+            movesDisplay.classList.add('hidden');
+            resultDisplay.classList.add('hidden');
+            moveButtons.classList.remove('hidden');
+            loading.classList.add('hidden');
+            isAnimating = false;
+            
+            // Remove winner animations
+            playerMoveEmoji.classList.remove('winner');
+            computerMoveEmoji.classList.remove('winner');
+        }
+
+        function updateScore() {
+            playerScoreEl.textContent = playerScore;
+            computerScoreEl.textContent = computerScore;
+        }
+
+        function updateRoundDisplay() {
+            roundTitle.textContent = `Round ${currentRound}/5`;
+            roundSubtitle.textContent = `What's your move, ${playerName}?`;
+        }
+
+        // Game functions
+        function startGame() {
+            playerName = playerNameInput.value.trim();
+            if (!playerName) return;
+            
+            gameState = 'playing';
+            currentRound = 1;
+            playerScore = 0;
+            computerScore = 0;
+            
+            playerLabel.textContent = playerName;
+            playerMoveLabel.textContent = playerName;
+            
+            updateScore();
+            updateRoundDisplay();
+            resetRound();
+            showPhase('playing');
+        }
+
+        function playMove(playerMove) {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            moveButtons.classList.add('hidden');
+            loading.classList.remove('hidden');
+            
+            const computerMove = getRandomMove();
+            
+            // Add suspense with delayed reveal
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                
+                // Show moves
+                playerMoveEmoji.textContent = moves[playerMove];
+                computerMoveEmoji.textContent = moves[computerMove];
+                playerMoveName.textContent = moveNames[playerMove];
+                computerMoveName.textContent = moveNames[computerMove];
+                
+                movesDisplay.classList.remove('hidden');
+                movesDisplay.classList.add('animate-scale-in');
+                
+                // Determine winner
+                const winner = determineWinner(playerMove, computerMove);
+                let result = '';
+                let resultClass = '';
+                
+                if (winner === 'tie') {
+                    result = "It's a tie!";
+                    resultClass = 'result-tie';
+                } else if (winner === 'player') {
+                    result = `${playerName} wins this round!`;
+                    resultClass = 'result-win';
+                    playerScore++;
+                    playerMoveEmoji.classList.add('winner');
+                } else {
+                    result = 'Computer wins this round!';
+                    resultClass = 'result-lose';
+                    computerScore++;
+                    computerMoveEmoji.classList.add('winner');
+                }
+                
+                resultDisplay.textContent = result;
+                resultDisplay.className = `result-display ${resultClass} animate-fade-in`;
+                resultDisplay.classList.remove('hidden');
+                
+                updateScore();
+                
+                setTimeout(() => {
+                    if (currentRound < 5) {
+                        currentRound++;
+                        updateRoundDisplay();
+                        resetRound();
+                    } else {
+                        showFinalResults();
+                    }
+                }, 2500);
+            }, 1000);
+        }
+
+        function showFinalResults() {
+            gameState = 'finished';
+            
+            finalPlayerScore.textContent = `${playerName}: ${playerScore}`;
+            finalComputerScore.textContent = `Computer: ${computerScore}`;
+            
+            let finalResult = '';
+            let resultClass = '';
+            
+            if (playerScore > computerScore) {
+                finalResult = `🎉 ${playerName} wins the game!`;
+                resultClass = 'result-win';
+            } else if (computerScore > playerScore) {
+                finalResult = '🤖 Computer wins the game!';
+                resultClass = 'result-lose';
+            } else {
+                finalResult = "🤝 It's a tie game!";
+                resultClass = 'result-tie';
+            }
+            
+            winnerAnnouncement.textContent = finalResult;
+            winnerAnnouncement.className = `winner-announcement ${resultClass}`;
+            
+            showPhase('finished');
+        }
+
+        function playAgain() {
+            gameState = 'setup';
+            playerName = '';
+            playerNameInput.value = '';
+            resetRound();
+            showPhase('setup');
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', startGame);
+
+        playerNameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                startGame();
+            }
+        });
+
+        playerNameInput.addEventListener('input', () => {
+            startBtn.disabled = !playerNameInput.value.trim();
+        });
+
+        // Move buttons
+        document.querySelectorAll('.move-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const move = btn.dataset.move;
+                playMove(move);
+            });
+        });
+
+        playAgainBtn.addEventListener('click', playAgain);
+
+        // Initialize
+        startBtn.disabled = true;
+    </script>
+</body>
+</html>
